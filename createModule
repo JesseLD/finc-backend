@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Função para verificar se um comando teve sucesso
+check_success() {
+    if [ $? -ne 0 ]; then
+        echo "Erro: $1"
+        exit 1
+    fi
+}
+
+read -p "Insert the module name: " moduleName
+
+# Capitalize the first letter of moduleName
+moduleNameCapitalized="$(echo "$moduleName" | sed -e 's/^./\U&/')"
+
+echo "Creating module $moduleName ..."
+
+# Diretórios de origem e destino
+modulesDir="src/App/Modules"
+routesDir="Route/v0"
+
+# Verifica se o diretório de módulos existe
+cd "$modulesDir" || { echo "Directory $modulesDir not found."; exit 1; }
+check_success "Failed to access directory $modulesDir"
+
+# Criação do módulo
+cp -r base "$moduleName"
+check_success "Failed to copy 'base' to '$moduleName'"
+
+cd "$moduleName" || { echo "Failed to create or access directory $moduleName."; exit 1; }
+
+mv baseController.ts "${moduleName}Controller.ts"
+mv baseHandler.ts "${moduleName}Handler.ts"
+mv baseModel.ts "${moduleName}Model.ts"
+mv baseService.ts "${moduleName}Service.ts"
+
+# Substituições nos arquivos do módulo
+sed -i "s/base/$moduleName/g" *.ts
+sed -i "s/Base/$moduleNameCapitalized/g" *.ts
+
+echo "Module $moduleName created successfully."
+
+# Criação da rota
+cd ../../ || { echo "Failed to access parent directory."; exit 1; }
+
+cd "$routesDir" || { echo "Directory $routesDir not found."; exit 1; }
+
+cp base.ts "${moduleName}Router.ts"
+check_success "Failed to copy 'base.ts' to '${moduleName}Router.ts'"
+
+# Substituições nos arquivos da rota
+sed -i "s/base/$moduleName/g" "${moduleName}Router.ts"
+sed -i "s/Base/$moduleNameCapitalized/g" "${moduleName}Router.ts"
+
+echo "Route $moduleName created successfully."
+
+cd ..
+
+# Adiciona a rota ao index.routes.ts
+echo "import { ${moduleNameCapitalized}Router } from \"./v0/${moduleName}Router\";" | cat - index.ts > temp && mv temp index.ts
+check_success "Failed to add import statement to 'index.ts'"
+
+sed -i "17 i\\
+router.use(\"/${moduleName}\", ${moduleNameCapitalized}Router);" index.ts
+
+check_success "Failed to add route usage to 'index.ts'"
+
+echo "Route $moduleName added to index.ts."
