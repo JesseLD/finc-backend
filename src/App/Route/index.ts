@@ -1,8 +1,4 @@
-import { LlcRouter } from "./v0/llcRouter";
-import { AsdfghRouter } from "./v0/asdfghRouter";
-import { MonkRouter } from "./v0/monkRouter";
-import { RzRouter } from "./v0/rzRouter";
-// import { KkkRouter } from "./v0/kkkRouter";
+import { CategoryRouter } from "./v0/categoryRouter";
 
 import { Router, Request, Response } from "express";
 import { ServiceResponse } from "../Services/ServiceResponse";
@@ -12,8 +8,7 @@ export const router = Router(); // Create a new router
 
 // Use the money spending category router
 router.use("/MoneySpendingCategories", MSCRouter);
-
-
+router.use("/category", CategoryRouter);
 
 
 

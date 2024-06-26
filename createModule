@@ -29,10 +29,10 @@ check_success "Failed to copy 'base' to '$moduleName'"
 
 cd "$moduleName" || { echo "Failed to create or access directory $moduleName."; exit 1; }
 
-mv baseController.ts "${moduleName}Controller.ts"
-mv baseHandler.ts "${moduleName}Handler.ts"
-mv baseModel.ts "${moduleName}Model.ts"
-mv baseService.ts "${moduleName}Service.ts"
+mv BaseController.ts "${moduleNameCapitalized}Controller.ts"
+mv BaseHandler.ts "${moduleNameCapitalized}Handler.ts"
+mv BaseModel.ts "${moduleNameCapitalized}Model.ts"
+mv BaseService.ts "${moduleNameCapitalized}Service.ts"
 
 # Substituições nos arquivos do módulo
 sed -i "s/base/$moduleName/g" *.ts
@@ -60,7 +60,7 @@ cd ..
 echo "import { ${moduleNameCapitalized}Router } from \"./v0/${moduleName}Router\";" | cat - index.ts > temp && mv temp index.ts
 check_success "Failed to add import statement to 'index.ts'"
 
-sed -i "17 i\\
+sed -i "11 i\\
 router.use(\"/${moduleName}\", ${moduleNameCapitalized}Router);" index.ts
 
 check_success "Failed to add route usage to 'index.ts'"

@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   BaseInsert,
   BaseUpdate,
-} from "../../Modules/base/baseHandler";
-import { baseController } from "../../Modules/base/baseController";
+} from "../../Modules/base/BaseHandler";
+import { baseController } from "../../Modules/base/BaseController";
 
 //BaseRouter is the router for the base routes
 export const BaseRouter = Router(); // Create a new router
